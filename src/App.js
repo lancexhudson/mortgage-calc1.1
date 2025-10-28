@@ -50,13 +50,6 @@ function App() {
             setActiveTab={setActiveTab}
           />
         )}
-        {activeTab === TABS.MORTGAGE && (
-          <MortgageTab
-            formData={formData}
-            updateForm={updateForm}
-            setActiveTab={setActiveTab}
-          />
-        )}
         {activeTab === TABS.FINDER && <HomeFinder formData={formData} />}
       </main>
     </div>

@@ -13,6 +13,10 @@
   margin-bottom: 1.5rem;
 }
 
+.space-y-4 > * + * {
+  margin-top: 1rem;
+}
+
 .form-group {
   margin-bottom: 1rem;
 }
@@ -83,6 +87,7 @@
   font-weight: 600;
   cursor: pointer;
   transition: background 0.2s;
+  margin-bottom: 1.5rem;
 }
 
 .btn-primary:hover {
@@ -135,7 +140,22 @@
   background: #059669;
 }
 
-@keyframes fadeIn {
+.animate-in {
+  animation: fadeSlideUp 0.6s ease-out;
+}
+
+@keyframes fadeSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* @keyframes fadeIn {
   from {
     opacity: 0;
     transform: translateY(10px);
@@ -148,7 +168,7 @@
 
 .animate-in {
   animation: fadeIn 0.5s ease-in;
-}
+} */
 
 /* In src/styles/Tabs.css */
 input[type='number'] {

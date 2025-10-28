@@ -78,3 +78,60 @@
   background: #fee2e2;
   color: #991b1b;
 }
+
+/* Add to existing HomeFinder.css */
+
+.error {
+  color: #ef4444;
+  font-size: 0.875rem;
+  text-align: center;
+}
+
+.results-header {
+  text-align: center;
+  margin: 1.5rem 0;
+}
+
+.loading {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 2rem;
+  color: #6b7280;
+}
+
+.no-results {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 2rem;
+  color: #6b7280;
+}
+
+.home-card.over-budget {
+  opacity: 0.7;
+  border: 1px solid #fee2e2;
+}
+
+.home-image {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+}
+
+.tag {
+  display: inline-block;
+  margin-top: 0.5rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.tag.affordable {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.tag.over {
+  background: #fee2e2;
+  color: #991b1b;
+}
