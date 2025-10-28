@@ -1,0 +1,17 @@
+.app-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f0f4ff 0%, #e0e7ff 100%);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.main-content {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+@media (max-width: 640px) {
+  .main-content {
+    padding: 1rem;
+  }
+}
