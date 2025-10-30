@@ -1,5 +1,5 @@
 // src/components/AffordabilityTab.js
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { formatCurrency } from '../utils/currency';
 import { calculateMortgage } from '../utils/mortgage';
 import '../styles/Tabs.css';
@@ -8,6 +8,29 @@ const AffordabilityTab = ({ formData, updateForm, setActiveTab }) => {
   const { income } = formData;
   const [showResult, setShowResult] = useState(false);
   const [showMortgage, setShowMortgage] = useState(false);
+
+  // Refs for scrolling
+  const resultRef = useRef(null);
+  const mortgageRef = useRef(null);
+
+  // Auto-scroll to section when it appears
+  useEffect(() => {
+    if (showResult && resultRef.current) {
+      resultRef.current.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+      });
+    }
+  }, [showResult]);
+
+  useEffect(() => {
+    if (showMortgage && mortgageRef.current) {
+      mortgageRef.current.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+      });
+    }
+  }, [showMortgage]);
 
   const calculateAffordability = () => {
     const annual =
@@ -18,7 +41,7 @@ const AffordabilityTab = ({ formData, updateForm, setActiveTab }) => {
         : income.value;
 
     const monthlyAllowed = (annual * 0.28) / 12;
-    const affordableHome = Math.round(monthlyAllowed * 240); // ~30yr @ 6%
+    const affordableHome = Math.round(monthlyAllowed * 240);
 
     updateForm({
       affordableHome,
@@ -30,7 +53,7 @@ const AffordabilityTab = ({ formData, updateForm, setActiveTab }) => {
   const calculateMortgageDetails = () => {
     const result = calculateMortgage({
       homeValue: formData.affordableHome,
-      downPayment: formData.affordableHome * 0.2, // 20%
+      downPayment: formData.affordableHome * 0.2,
       interestRate: 6.8,
       loanDuration: 30,
     });
@@ -41,17 +64,14 @@ const AffordabilityTab = ({ formData, updateForm, setActiveTab }) => {
       monthlyPayment: result.monthlyPayment,
       interestRate: 6.8,
       loanDuration: 30,
-      resultText: `With a 20% down payment and 6.8% rate, your monthly payment is ${formatCurrency(
-        result.monthlyPayment
-      )}.`,
     });
 
     setShowMortgage(true);
   };
 
   return (
-    <div className="space-y-6">
-      {/* === 1. Income Input === */}
+    <div className="space-y-8">
+      {/* 1. Income Input */}
       <div className="card">
         <h2 className="card-title">What Can I Afford?</h2>
 
@@ -96,9 +116,10 @@ const AffordabilityTab = ({ formData, updateForm, setActiveTab }) => {
           Calculate Home Affordability
         </button>
       </div>
-      {/* === 2. Max Home Result === */}
+
+      {/* 2. Max Home Result */}
       {showResult && (
-        <div className="animate-in">
+        <div ref={resultRef}>
           <div className="highlight-card">
             <p>Based on 28% rule:</p>
             <p className="big-price">
@@ -115,9 +136,10 @@ const AffordabilityTab = ({ formData, updateForm, setActiveTab }) => {
           </button>
         </div>
       )}
-      {/* === 3. Mortgage Summary === */}
+
+      {/* 3. Mortgage Summary */}
       {showMortgage && (
-        <div className="animate-in">
+        <div ref={mortgageRef}>
           <div className="card">
             <h3 className="card-title">Mortgage Summary</h3>
             <div className="space-y-4">
@@ -150,7 +172,7 @@ const AffordabilityTab = ({ formData, updateForm, setActiveTab }) => {
             </button>
           </div>
         </div>
-      )}{' '}
+      )}
     </div>
   );
 };

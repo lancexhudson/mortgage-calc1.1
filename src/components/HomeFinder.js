@@ -17,7 +17,7 @@ const HomeFinder = ({ formData }) => {
 
     setLoading(true);
     setError('');
-    setHomes([]); // Clear previous results
+    setHomes([]);
 
     try {
       const response = await fetch(
@@ -26,22 +26,17 @@ const HomeFinder = ({ formData }) => {
           method: 'GET',
           headers: {
             'X-RapidAPI-Key':
-              process.env.REACT_APP_RAPIDAPI_KEY ||
-              'YOUR_PUBLIC_FALLBACK_KEY_HERE', // Fallback for prod
+              process.env.REACT_APP_RAPIDAPI_KEY || 'YOUR_FALLBACK_KEY',
             'X-RapidAPI-Host': 'zillow56.p.rapidapi.com',
             'Content-Type': 'application/json',
           },
         }
       );
 
-      if (!response.ok) {
-        throw new Error(`API error: ${response.status}`);
-      }
-
+      if (!response.ok) throw new Error(`API error: ${response.status}`);
       const data = await response.json();
 
-      // Map API response to our home structure (adapt based on actual fields)
-      const mappedHomes = (data.results || []).slice(0, 6).map((home) => ({
+      const mappedHomes = (data.results || []).slice(0, 12).map((home) => ({
         id: home.zpid || Math.random(),
         price: home.price || 0,
         address: `${home.streetAddress || ''}, ${home.city || ''}, ${
@@ -69,22 +64,30 @@ const HomeFinder = ({ formData }) => {
     searchHomes();
   };
 
+  const zillowUrl = zipCode
+    ? `https://www.zillow.com/homes/${zipCode}_rb/`
+    : 'https://www.zillow.com';
+
   return (
     <div>
+      {/* ---- Budget Banner ---- */}
       <div className="affordability-banner">
         <h2>Your Budget</h2>
         <p className="big-price">{formatCurrency(formData.affordableHome)}</p>
         <p>Max home price</p>
       </div>
 
+      {/* ---- Search Card ---- */}
       <div className="card">
         <form onSubmit={handleSearch}>
           <label className="label">Search Homes by ZIP Code</label>
+
+          {/* Flex container – centers input + button */}
           <div className="search-bar">
             <input
               type="text"
               value={zipCode}
-              onChange={(e) => setZipCode(e.target.value.replace(/\D/g, ''))} // Only digits
+              onChange={(e) => setZipCode(e.target.value.replace(/\D/g, ''))}
               placeholder="e.g., 78701"
               className="input"
               maxLength={5}
@@ -97,17 +100,19 @@ const HomeFinder = ({ formData }) => {
 
         {error && <p className="error mt-3">{error}</p>}
 
+        {/* ---- Results Header ---- */}
         {homes.length > 0 && (
           <div className="results-header">
             <h3 className="text-lg font-semibold mb-4">
               Homes for Sale in {zipCode}
             </h3>
             <p className="text-sm text-gray-500">
-              Showing {homes.length} homes (filtered to your budget)
+              Showing {homes.length} homes
             </p>
           </div>
         )}
 
+        {/* ---- Home Grid ---- */}
         <div className="home-grid">
           {homes.map((home) => (
             <HomeCard
@@ -116,22 +121,39 @@ const HomeFinder = ({ formData }) => {
               maxPrice={formData.affordableHome}
             />
           ))}
+
           {loading && (
             <div className="loading col-span-full">
-              <p>Loading homes... (Real data from Zillow)</p>
+              <p>Loading homes from Zillow...</p>
             </div>
           )}
+
           {homes.length === 0 && !loading && zipCode && (
             <p className="no-results col-span-full text-center text-gray-500">
-              No homes found in {zipCode}. Try another ZIP!
+              No homes found in {zipCode}.
             </p>
           )}
         </div>
+
+        {/* ---- Go to Zillow Link ---- */}
+        {homes.length > 0 && (
+          <div className="zillow-link-container">
+            <a
+              href={zillowUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="zillow-link"
+            >
+              Go to Zillow.com
+            </a>
+          </div>
+        )}
       </div>
     </div>
   );
 };
 
+/* ---------- Home Card ---------- */
 const HomeCard = ({ home, maxPrice }) => {
   const isAffordable = home.price <= maxPrice;
 

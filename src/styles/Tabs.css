@@ -140,36 +140,6 @@
   background: #059669;
 }
 
-.animate-in {
-  animation: fadeSlideUp 0.6s ease-out;
-}
-
-@keyframes fadeSlideUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* @keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.animate-in {
-  animation: fadeIn 0.5s ease-in;
-} */
-
 /* In src/styles/Tabs.css */
 input[type='number'] {
   -moz-appearance: textfield;
@@ -178,4 +148,9 @@ input[type='number']::-webkit-outer-spin-button,
 input[type='number']::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
+}
+
+/* Prevent content from being hidden under sticky header */
+html {
+  scroll-padding-top: 110px; /* adjust if your header is taller/shorter */
 }
