@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import Header from './components/Header';
 import AffordabilityTab from './components/AffordabilityTab';
-import MortgageTab from './components/MortgageTab';
+// import MortgageTab from './components/MortgageTab';
 import HomeFinder from './components/HomeFinder';
-import { formatCurrency } from './utils/currency';
+// import { formatCurrency } from './utils/currency';
 import './styles/App.css';
 
 const TABS = {
