@@ -1,9 +1,16 @@
 .affordability-banner {
-  background: white;
+  /* background: white;
   padding: 1.5rem;
   border-radius: 16px;
   text-align: center;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  margin-bottom: 1.5rem; */
+
+  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+  color: white;
+  padding: 1.5rem;
+  border-radius: 16px;
+  text-align: center;
   margin-bottom: 1.5rem;
 }
 
