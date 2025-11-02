@@ -9,9 +9,19 @@ const HomeFinder = ({ formData }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
+  // Calculate budget range (±10%)
+  const affordableHome = formData.affordableHome || 0;
+  const lowerBound = Math.round(affordableHome * 0.9);
+  const upperBound = Math.round(affordableHome * 1.1);
+
   const searchHomes = async () => {
     if (!zipCode || zipCode.length < 5) {
       setError('Please enter a valid 5-digit ZIP code.');
+      return;
+    }
+
+    if (affordableHome <= 0) {
+      setError('Please complete the affordability calculation first.');
       return;
     }
 
@@ -20,23 +30,28 @@ const HomeFinder = ({ formData }) => {
     setHomes([]);
 
     try {
-      const response = await fetch(
-        `https://zillow56.p.rapidapi.com/search?location=${zipCode}&home_type=Houses`,
-        {
-          method: 'GET',
-          headers: {
-            'X-RapidAPI-Key':
-              process.env.REACT_APP_RAPIDAPI_KEY || 'YOUR_FALLBACK_KEY',
-            'X-RapidAPI-Host': 'zillow56.p.rapidapi.com',
-            'Content-Type': 'application/json',
-          },
-        }
-      );
+      // Use API price filtering!
+      const url = new URL('https://zillow56.p.rapidapi.com/search');
+      url.searchParams.append('location', zipCode);
+      url.searchParams.append('home_type', 'Houses');
+      url.searchParams.append('price_min', lowerBound);
+      url.searchParams.append('price_max', upperBound);
+      url.searchParams.append('page', '1');
+      url.searchParams.append('limit', '12');
+
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'X-RapidAPI-Key':
+            process.env.REACT_APP_RAPIDAPI_KEY || 'YOUR_FALLBACK_KEY',
+          'X-RapidAPI-Host': 'zillow56.p.rapidapi.com',
+        },
+      });
 
       if (!response.ok) throw new Error(`API error: ${response.status}`);
       const data = await response.json();
 
-      const mappedHomes = (data.results || []).slice(0, 12).map((home) => ({
+      const mappedHomes = (data.results || []).map((home) => ({
         id: home.zpid || Math.random(),
         price: home.price || 0,
         address: `${home.streetAddress || ''}, ${home.city || ''}, ${
@@ -70,19 +85,21 @@ const HomeFinder = ({ formData }) => {
 
   return (
     <div>
-      {/* ---- Budget Banner ---- */}
+      {/* Budget Banner */}
       <div className="affordability-banner">
-        <h2>Your Budget</h2>
-        <p className="big-price">{formatCurrency(formData.affordableHome)}</p>
-        <p>Max home price</p>
+        <h2>Your Budget Range</h2>
+        <p className="big-price">
+          {formatCurrency(lowerBound)} – {formatCurrency(upperBound)}
+        </p>
+        <p className="small">
+          Homes within ±10% of {formatCurrency(affordableHome)}
+        </p>
       </div>
 
-      {/* ---- Search Card ---- */}
+      {/* Search Card */}
       <div className="card">
         <form onSubmit={handleSearch}>
           <label className="label">Search Homes by ZIP Code</label>
-
-          {/* Flex container – centers input + button */}
           <div className="search-bar">
             <input
               type="text"
@@ -100,42 +117,36 @@ const HomeFinder = ({ formData }) => {
 
         {error && <p className="error mt-3">{error}</p>}
 
-        {/* ---- Results Header ---- */}
+        {/* Results Header */}
         {homes.length > 0 && (
           <div className="results-header">
             <h3 className="text-lg font-semibold mb-4">
-              Homes for Sale in {zipCode}
+              Homes in {zipCode} (Within Budget)
             </h3>
             <p className="text-sm text-gray-500">
-              Showing {homes.length} homes
+              Showing {homes.length} homes in your range
             </p>
           </div>
         )}
 
-        {/* ---- Home Grid ---- */}
         <div className="home-grid">
           {homes.map((home) => (
-            <HomeCard
-              key={home.id}
-              home={home}
-              maxPrice={formData.affordableHome}
-            />
+            <HomeCard key={home.id} home={home} maxPrice={affordableHome} />
           ))}
-
           {loading && (
             <div className="loading col-span-full">
               <p>Loading homes from Zillow...</p>
             </div>
           )}
-
           {homes.length === 0 && !loading && zipCode && (
             <p className="no-results col-span-full text-center text-gray-500">
-              No homes found in {zipCode}.
+              No homes found in {zipCode} within your budget range. Try another
+              ZIP!
             </p>
           )}
         </div>
 
-        {/* ---- Go to Zillow Link ---- */}
+        {/* Zillow Link */}
         {homes.length > 0 && (
           <div className="zillow-link-container">
             <a
@@ -153,7 +164,6 @@ const HomeFinder = ({ formData }) => {
   );
 };
 
-/* ---------- Home Card ---------- */
 const HomeCard = ({ home, maxPrice }) => {
   const isAffordable = home.price <= maxPrice;
 

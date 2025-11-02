@@ -5,10 +5,7 @@ const Header = ({ activeTab, setActiveTab }) => {
   return (
     <header className="header">
       <div className="header-inner">
-        <h1 className="logo">
-          Mortgage
-          <br className="mobile-break" /> Calculator
-        </h1>
+        <h1 className="logo">Mortgage Calculator</h1>
         <nav className="nav">
           <button
             onClick={() => setActiveTab('afford')}

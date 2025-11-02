@@ -13,7 +13,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
 }
 
 .logo {
@@ -27,8 +27,8 @@
   display: none;
 }
 @media (max-width: 640px) {
-  .mobile-break {
-    display: inline;
+  .logo {
+    text-align: center;
   }
 }
 
@@ -81,4 +81,11 @@
 .tab-btn.active {
   color: #4f46e5;
   border-bottom: 4px solid #4f46e5;
+}
+
+/* Optional: Hide nav on very small screens */
+@media (max-width: 360px) {
+  .nav {
+    display: none;
+  }
 }

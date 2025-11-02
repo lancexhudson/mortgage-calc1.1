@@ -7,6 +7,12 @@
   margin-bottom: 1.5rem;
 }
 
+.affordability-banner .small {
+  font-size: 0.875rem;
+  opacity: 0.9;
+  margin-top: 0.25rem;
+}
+
 .search-bar {
   display: flex;
   gap: 0.5rem;
